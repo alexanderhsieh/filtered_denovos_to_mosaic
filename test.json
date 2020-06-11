@@ -1,0 +1,10 @@
+{
+  "filtered_denovo_to_mosaic.outlier_script": "/Users/ahsieh/Documents/talkowski_lab/projects/filtered_denovo_to_mosaic/filter_outlier.R",
+  "filtered_denovo_to_mosaic.expected_dnsnvs": "1",
+  "filtered_denovo_to_mosaic.postcut": "10",
+  "filtered_denovo_to_mosaic.cohortsize": "4",
+  "filtered_denovo_to_mosaic.output_prefix": "SSC",
+  "filtered_denovo_to_mosaic.em_mosaic_script": "/Users/ahsieh/Documents/talkowski_lab/projects/filtered_denovo_to_mosaic/EM-mosaic.v2.R",
+  "filtered_denovo_to_mosaic.dnsnvs": "Array[File]"
+}
+
