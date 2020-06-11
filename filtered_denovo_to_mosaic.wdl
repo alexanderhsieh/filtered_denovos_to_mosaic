@@ -25,7 +25,7 @@ workflow filtered_denovo_to_mosaic {
   File outlier_script
   
   Int postcut
-  Int cohortsize 
+  Int cohort_size 
   Int expected_dnsnvs 
   Int case_cutoff 
 
@@ -61,7 +61,7 @@ workflow filtered_denovo_to_mosaic {
     script = outlier_script,
     cohort_size = cohort_size,
     exp = expected_dnsnvs,
-    cutoff = cutoff
+    cutoff = case_cutoff
   }
 
   #run EM_mosaic
