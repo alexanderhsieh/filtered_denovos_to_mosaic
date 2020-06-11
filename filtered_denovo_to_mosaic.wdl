@@ -153,6 +153,10 @@ task detect_mosaic {
   String outprefix
 
   command {
+    sudo R -e "install.packages('ggplot2', repos='http://cran.rstudio.com/')"
+    sudo R -e "install.packages('bbmle', repos='http://cran.rstudio.com/')"
+    sudo R -e "install.packages('emdbook', repos='http://cran.rstudio.com/')"
+
     Rscript ${script} ${infile} ${outprefix} ${postcut} 
   }
 
