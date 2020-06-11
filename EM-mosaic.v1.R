@@ -165,13 +165,20 @@ fitReadCounts <- function(a, op) {
 
   ## FIRST PASS
   
+  ## check if there is enough data to estimate parameters; otherwise exit with message
+  if(nrow(x) < 50){
+    stop("Not enough data in to estimate parameters: <50 variants in callset" )
+    quit()
+  }
   ## generate depth table and estimate overdispersion parameter
+  
   results = estimateTheta(x)  
   results = results[results$m  > 0, ]
   
   ## check if there is enough data to estimate parameters; otherwise exit with message
   if(nrow(results) == 0){
     stop("Not enough data in to estimate parameters: <3 variants per VAF bin")
+    quit()
   }
   
   
