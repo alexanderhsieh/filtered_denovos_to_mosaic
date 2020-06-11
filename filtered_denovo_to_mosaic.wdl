@@ -158,6 +158,7 @@ task detect_mosaic {
 
   runtime {
     docker: "alexanderhsieh/em-mosaic-base:latest"
+    
   }
 
   output {
