@@ -25,8 +25,9 @@ workflow filtered_denovo_to_mosaic {
   File outlier_script
   
   Int postcut
-  Int cohortsize # number of samples in this cohort
-  Int expected_dnsnvs # rough expectation; exomes: ~1 denovo/sample; genomes: ~100 denovos/sample
+  Int cohortsize 
+  Int expected_dnsnvs 
+  Int case_cutoff 
 
   String output_prefix
 
@@ -37,6 +38,7 @@ workflow filtered_denovo_to_mosaic {
     postcut: "posterior odds cutoff score (default: 10) for defining mosaic vs. germline"
     cohortsize: "number of samples in this cohort; for outlier calculation"
     expected_dnsnvs: "rough expected number of de novos/sample; exomes=1, genomes=100"
+    case_cutoff: "for outlier removal, at how many expected cases should we draw the line (Poisson expectation with mean of expected_dnsnvs"
     output_prefix: "filename prefix for output files"
   }
 
@@ -52,9 +54,38 @@ workflow filtered_denovo_to_mosaic {
     outprefix = output_prefix
   }
 
+  #run outlier filter
+  call filter_outlier{
+    input:
+    infile = gather_callsets.out,
+    script = outlier_script,
+    cohort_size = cohort_size,
+    exp = expected_dnsnvs,
+    cutoff = cutoff
+  }
+
+  #run EM_mosaic
+  call detect_mosaic {
+    input:
+    infile = filter_outlier.out,
+    script = em_mosaic_script,
+    postcut = postcut,
+    outprefix = output_prefix
+  }
+
 
   output {
       File cohort_callset = gather_callsets.out
+
+      File callset_outlier_flagged = filter_outlier.out
+
+      File denovos = detect_mosaic.denovos
+      File mosaics = detect_mosaic.mosaics
+      File plot_EM = detect_mosaic.plot_EM
+      File plot_QQ = detect_mosaic.plot_QQ
+      File plot_overdispersion = detect_mosaic.plot_overdispersion
+      File plot_dp_vs_vaf = detect_mosaic.plot_dp_vs_vaf
+      File plot_vaf_vs_post = detect_mosaic.plot_vaf_vs_post
     }
 
 }
@@ -93,15 +124,16 @@ task gather_callsets {
 
 #Adds Outlier filter-related columns to variants file for downstream filtering
 ## NOTE:  THIS IS A COHORT-LEVEL FILTER
-task filter_OUT {
+task filter_outlier {
   File infile
   File script
   Int cohort_size
+  Int exp
   Int cutoff
   String outprefix = basename(infile, '.txt')
 
   command {
-    Rscript ${script} ${infile} ${outprefix} ${cohort_size} ${cutoff}
+    Rscript ${script} ${infile} ${outprefix} ${cohort_size} ${exp} ${cutoff}
   }
 
   runtime {
@@ -109,7 +141,7 @@ task filter_OUT {
   }
 
   output {
-    File outfile = "${outprefix}.OUT.txt"
+    File out = "${outprefix}.OUT.txt"
   }
 }
 
@@ -118,7 +150,7 @@ task detect_mosaic {
   File infile
   File script
   Int postcut 
-  String outprefix = basename(infile, '.txt')
+  String outprefix
 
   command {
     Rscript ${script} ${infile} ${outprefix} ${postcut} 
