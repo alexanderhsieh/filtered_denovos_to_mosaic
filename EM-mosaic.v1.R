@@ -1,5 +1,5 @@
 ## check if required packages are installed; if not install them
-list.of.packages <- c("bbmle", "emdbook", "ggplot2", "tidyverse")
+list.of.packages <- c("bbmle", "emdbook", "ggplot2")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
 
