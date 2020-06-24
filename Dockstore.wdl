@@ -43,7 +43,7 @@ workflow filtered_denovo_to_mosaic {
   #run EM_mosaic
   call detect_mosaic {
     input:
-    infile = filter_outlier.out,
+    infile = dnsnvs,
     script = em_mosaic_script,
     postcut = postcut,
     outprefix = output_prefix
